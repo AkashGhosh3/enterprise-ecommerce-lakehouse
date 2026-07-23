@@ -1,3 +1,4 @@
+from importlib import metadata
 import json
 from pathlib import Path
 
@@ -29,3 +30,16 @@ class MetadataManager:
             )
 
         logger.info("Metadata updated successfully.")
+
+    def get_last_file(self, dataset_name):
+
+        metadata = self.read_metadata()
+
+        dataset = metadata.get(dataset_name)
+
+        if not dataset:
+            raise ValueError(
+                f"No metadata found for dataset '{dataset_name}'."
+            )
+
+        return dataset["last_file"]
