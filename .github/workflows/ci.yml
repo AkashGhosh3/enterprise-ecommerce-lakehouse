@@ -17,7 +17,7 @@ jobs:
       - name: Checkout Repository
         uses: actions/checkout@v4
 
-      - name: Setup Python
+      - name: Set up Python
         uses: actions/setup-python@v5
         with:
           python-version: "3.12"
@@ -29,6 +29,6 @@ jobs:
 
       - name: Run Tests
         env:
-        PYTHONPATH: .
+          PYTHONPATH: .
         run: |
           python -m pytest tests
