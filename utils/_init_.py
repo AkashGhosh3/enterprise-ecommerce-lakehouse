@@ -1,0 +1,1 @@
+self.s3 = S3Service()

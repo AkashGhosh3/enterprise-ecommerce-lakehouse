@@ -1,6 +1,31 @@
 {
     "products": {
-        "last_run": "2026-07-20T09:59:02.017980",
-        "last_file": "bronze/products/year=2026/month=07/day=20/20260720_095901.json"
+        "pipeline": "enterprise_ecommerce_pipeline",
+        "layer": "bronze",
+        "last_file": "bronze/products/year=2026/month=07/day=27/20260727_095923.json",
+        "rows_processed": 20,
+        "status": "SUCCESS",
+        "file_format": "json",
+        "last_updated": "2026-07-28T05:53:08.468405+00:00",
+        "last_processed_file": "bronze/products/year=2026/month=07/day=27/20260727_095923.json"
+    },
+    "products_silver": {
+        "pipeline": "bronze_to_silver",
+        "layer": "silver",
+        "last_file": "silver/products/year=2026/month=07/day=28/products.parquet",
+        "last_processed_file": "",
+        "rows_processed": 20,
+        "status": "SUCCESS",
+        "file_format": "parquet",
+        "last_updated": "2026-07-28T05:53:08.434807+00:00"
+    },
+    "products_gold": {
+        "pipeline": "silver_to_gold",
+        "layer": "gold",
+        "last_file": "gold/products/year=2026/month=07/day=28/products.parquet",
+        "rows_processed": 4,
+        "status": "SUCCESS",
+        "file_format": "parquet",
+        "last_updated": "2026-07-28T05:26:45.506495+00:00"
     }
 }

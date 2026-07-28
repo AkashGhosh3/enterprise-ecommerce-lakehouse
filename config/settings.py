@@ -9,6 +9,7 @@ class Settings:
     PROJECT_NAME = os.getenv("PROJECT_NAME")
     DATA_LAKE_BUCKET = os.getenv("DATA_LAKE_BUCKET")
     ATHENA_DATABASE = os.getenv("ATHENA_DATABASE")
+    S3_BUCKET: str = os.getenv("S3_BUCKET")
 
 
 settings = Settings()

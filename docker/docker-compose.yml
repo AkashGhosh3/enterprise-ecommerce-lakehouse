@@ -1,0 +1,28 @@
+services:
+  airflow:
+    build:
+      context: ..
+      dockerfile: docker/Dockerfile
+
+    container_name: airflow
+
+    ports:
+      - "8080:8080"
+
+    volumes:
+      - ../dags:/opt/airflow/dags
+      - ../logs:/opt/airflow/logs
+      - ../plugins:/opt/airflow/plugins
+      - ..:/opt/airflow/project
+
+      # Mount AWS credentials into the container
+      - C:/Users/dell/.aws:/home/airflow/.aws:ro
+
+    environment:
+      AIRFLOW__CORE__LOAD_EXAMPLES: "False"
+      AIRFLOW_HOME: /opt/airflow
+      AIRFLOW__WEBSERVER__EXPOSE_CONFIG: "True"
+
+    command: standalone
+
+    restart: unless-stopped

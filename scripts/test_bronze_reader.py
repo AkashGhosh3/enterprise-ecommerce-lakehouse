@@ -1,17 +1,15 @@
+from config.logger import logger
 from services.bronze_to_silver import BronzeToSilverService
 
-service = BronzeToSilverService("products")
 
-df = service.read_latest_bronze()
+def main():
+    logger.info("Starting Bronze → Silver transformation...")
 
-clean_df = service.clean_data(df)
+    service = BronzeToSilverService("products")
+    service.run()
 
-print(clean_df.head())
+    logger.success("Bronze → Silver transformation completed successfully.")
 
-print(clean_df.columns)
 
-print(clean_df.dtypes)
-
-service.save_to_silver(clean_df)
-
-print(clean_df.shape)
+if __name__ == "__main__":
+    main()

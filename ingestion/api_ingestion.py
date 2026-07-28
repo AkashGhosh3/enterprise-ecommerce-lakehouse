@@ -1,8 +1,9 @@
-from importlib.metadata import metadata
 import json
-from datetime import datetime
-from quality.validator import DataValidator
+from datetime import datetime, UTC
+
 import requests
+
+from quality.validator import DataValidator
 from utils.metadata_manager import MetadataManager
 from config.logger import logger
 from config.settings import settings
@@ -15,20 +16,18 @@ class APIIngestion(BaseIngestion):
     def __init__(self, api_url: str, dataset_name: str):
         self.api_url = api_url
         self.dataset_name = dataset_name
+        self.metadata = MetadataManager()
 
     def extract(self):
         logger.info(f"Fetching data from {self.api_url}")
 
         response = requests.get(self.api_url)
-
         response.raise_for_status()
 
         data = response.json()
 
         DataValidator.validate_not_empty(data)
-
         DataValidator.validate_is_list(data)
-
         DataValidator.validate_required_fields(
             data,
             [
@@ -38,11 +37,13 @@ class APIIngestion(BaseIngestion):
             ]
         )
 
+        logger.success(f"Successfully extracted {len(data)} records.")
+
         return data
 
     def save(self, data):
 
-        now = datetime.utcnow()
+        now = datetime.now(UTC)
 
         year = now.strftime("%Y")
         month = now.strftime("%m")
@@ -58,20 +59,27 @@ class APIIngestion(BaseIngestion):
             f"{timestamp}.json"
         )
 
-        s3_client.put_object(
-            Bucket=settings.DATA_LAKE_BUCKET,
-            Key=key,
-            Body=json.dumps(data)
-        )
+        try:
 
-        logger.success(f"Uploaded {key}")
-        manager = MetadataManager()
+            s3_client.put_object(
+                Bucket=settings.DATA_LAKE_BUCKET,
+                Key=key,
+                Body=json.dumps(data)
+            )
 
-        metadata = manager.read_metadata()
+            logger.success(f"Uploaded {key}")
 
-        metadata[self.dataset_name] = {
-            "last_run": datetime.utcnow().isoformat(),
-            "last_file": key
-}
+            self.metadata.update_dataset(
+                dataset_name=self.dataset_name,
+                layer="bronze",
+                last_file=key,
+                rows=len(data),
+                status="SUCCESS",
+                file_format="json"
+            )
 
-        manager.write_metadata(metadata)
+            logger.success("Bronze metadata updated successfully.")
+
+        except Exception:
+            logger.exception("Failed to upload Bronze dataset.")
+            raise

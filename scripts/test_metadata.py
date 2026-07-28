@@ -1,15 +1,14 @@
-from datetime import datetime
-
 from utils.metadata_manager import MetadataManager
 
 manager = MetadataManager()
 
-metadata = manager.read_metadata()
+manager.update_dataset(
+    dataset_name="products",
+    layer="bronze",
+    last_file="bronze/products/test.json",
+    rows=20,
+    status="SUCCESS",
+    file_format="json"
+)
 
-metadata["products"] = {
-    "last_run": datetime.utcnow().isoformat()
-}
-
-manager.write_metadata(metadata)
-
-print(manager.read_metadata())
+print(manager.get_dataset_metadata("products"))
